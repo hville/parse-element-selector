@@ -1,3 +1,10 @@
+/*
+	special characters with associated actions:
+	m:mode to edit k OR v
+	k:key, v:value, f:onDoneFunction
+	x:specialCharacters
+	c:action set
+*/
 var markers = {
 	tag: {
 		'#': {m: 'v', f: setId, x: 'tag'},
@@ -17,20 +24,17 @@ var markers = {
  * parse Element Selector string and return a markup definition
  * @param {string} sel - W3 selector string
  * @param {Object} [def] - predefined options
- * @returns {Object} markup definition
+ * @returns {Object} markup definition: {tag, xmlns, prefix, attributes}
  */
-module.exports = function parseSel(sel, def) {
-	if (!def) def = {attributes: {}, element:{}} // [, tagName: ''][, xmlns: ''][, prefix: '']
-	else {
-		if (!def.attributes) def.attributes = {}
-		if (!def.element) def.element = {}
-	}
+module.exports = function parseSel(sel) {
+	var def = {}
 
+	//initial control context to be changed on special chars
 	var ctx = {
 		c: markers.tag,
 		m: 'v',
 		v: '',
-		f: setTN
+		f: setTag
 	}
 	for (var i=0; i<sel.length; ++i) {
 		var act = ctx.c[sel[i]]
@@ -49,10 +53,13 @@ module.exports = function parseSel(sel, def) {
 	ctx.f(def, ctx)
 	return checkTagNS(def)
 }
+// call back editing function
 function setId(res, ctx) {
+	if (!res.attributes) res.attributes = {}
 	res.attributes.id = ctx.v
 }
 function appendClass(res, ctx) {
+	if (!res.attributes) res.attributes = {}
 	var att = res.attributes
 	if (ctx.v) {
 		if (att.class) att.class += ' ' + ctx.v
@@ -60,18 +67,22 @@ function appendClass(res, ctx) {
 	}
 }
 function setAttribute(res, ctx) {
-	if (ctx.k === 'xmlns') res.element.xmlns = ctx.v
-	else res.attributes[ctx.k] = ctx.v || true
+	if (ctx.k === 'xmlns') res.xmlns = ctx.v
+	else {
+		if (!res.attributes) res.attributes = {}
+		res.attributes[ctx.k] = ctx.v || true
+	}
 }
-function setTN(res, ctx) {
-	res.element.tagName = ctx.v
+function setTag(res, ctx) {
+	res.tag = ctx.v
 }
+// final prefix chack
 function checkTagNS(res) {
-	var tagName = res.element.tagName,
-			tagIndex = tagName.indexOf(':')
-	if (tagIndex >= 0) {
-		res.element.prefix = tagName.slice(0, tagIndex)
-		res.element.tagName = tagName.slice(tagIndex+1)
+	var tag = res.tag,
+			idx = tag.indexOf(':')
+	if (idx >= 0) {
+		res.prefix = tag.slice(0, idx)
+		res.tag = tag.slice(idx+1)
 	}
 	return res
 }
