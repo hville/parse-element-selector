@@ -1,0 +1,27 @@
+{
+  "name": "parse-element-selector",
+  "version": "0.1.0",
+  "description": "parse string w3 element selector used in hyperscript functions",
+  "keywords": [
+    "dom", "createElement", "hyperscript", "svg"
+  ],
+  "author": "Hugo Villeneuve",
+  "main": ".index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "cotest": "^1.6.1"
+  },
+  "scripts": {
+    "test": "cotest test",
+    "bld": "webpack ./index.js ./bld/parse-element-selector.min.js --progress --colors --optimize-minimize"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hville/parse-element-selector.git"
+  },
+  "private": false,
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}
