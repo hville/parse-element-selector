@@ -24,4 +24,5 @@ ct('markers in attribute values', function() {
 	ct('{==}', sel('[a=b.c]').attributes.a, 'b.c')
 	ct('{==}', sel('[a:b=c]').attributes['a:b'], 'c')
 	ct('{==}', sel('[a:b=c.d]').attributes['a:b'], 'c.d')
+	ct('{==}', sel('svg[style="display: none;"]').attributes.style, 'display: none;')
 })
