@@ -23,7 +23,6 @@ var markers = {
 /**
  * parse Element Selector string and return a markup definition
  * @param {string} sel - W3 selector string
- * @param {Object} [def] - predefined options
  * @returns {Object} markup definition: {tag, xmlns, prefix, attributes}
  */
 module.exports = function parseSel(sel) {
