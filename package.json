@@ -1,6 +1,6 @@
 {
   "name": "parse-element-selector",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "parse string w3 element selector used in hyperscript functions",
   "keywords": [
     "dom", "createElement", "hyperscript", "svg"
@@ -12,8 +12,7 @@
     "cotest": "^1.6.1"
   },
   "scripts": {
-    "test": "cotest test",
-    "bld": "webpack ./index.js ./bld/parse-element-selector.min.js --progress --colors --optimize-minimize"
+    "test": "cotest test"
   },
   "repository": {
     "type": "git",

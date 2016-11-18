@@ -30,27 +30,25 @@ module.exports = function parseSel(sel) {
 	var def = {}
 
 	//initial control context to be changed on special chars
-	var ctx = {
-		c: markers.tag,
-		m: 'v',
-		v: '',
-		f: setTag
-	}
+	var chr = markers.tag,
+			fcn = setTag,
+			mod = 'v',
+			ctx = {k: '', v: ''}
 	for (var i=0; i<sel.length; ++i) {
-		var act = ctx.c[sel[i]]
+		var act = chr[sel[i]]
 		if (act) {
 			if(act.f) { // callback and reset
-				ctx.f(def, ctx)
+				fcn(def, ctx)
 				ctx.k = act.k
-				ctx.f = act.f
+				fcn = act.f
 				ctx.v = ''
 			}
-			if (act.m) ctx.m = act.m
-			if (act.x) ctx.c = markers[act.x]
+			if (act.m) mod = act.m
+			if (act.x) chr = markers[act.x]
 		}
-		else ctx[ctx.m] += sel[i]
+		else ctx[mod] += sel[i]
 	}
-	ctx.f(def, ctx)
+	fcn(def, ctx)
 	return checkTagNS(def)
 }
 // call back editing function
