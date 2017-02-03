@@ -1,85 +1,51 @@
-/*
-	special characters with associated actions:
-	m:mode to edit k OR v
-	k:key, v:value, f:onDoneFunction
-	x:specialCharacters
-	c:action set
-*/
-var markers = {
-	tag: {
-		'#': {m: 'v', f: setId, x: 'tag'},
-		'.': {m: 'v', f: appendClass, x: 'tag'},
-		'[': {m: 'k', k: '', f: setAttribute, x: 'key'},
-	},
-	key: {
-		'=': {m: 'v', x: 'val'},
-		']': {x: 'tag'}
-	},
-	val: {
-		'"': {},
-		']': {x: 'tag'}
-	}
-}
-/**
- * parse Element Selector string and return a markup definition
- * @param {string} sel - W3 selector string
- * @returns {Object} markup definition: {tag, xmlns, prefix, attributes}
- */
-module.exports = function parseSel(sel) {
-	var def = {}
+var rRE =/[\s\"\']+/g,
+		mRE = /(?:^|\.|\#)[^\.\#\[]+|\[[^\]]+\]/g
 
-	//initial control context to be changed on special chars
-	var chr = markers.tag,
-			fcn = setTag,
-			mod = 'v',
-			ctx = {k: '', v: ''}
-	for (var i=0; i<sel.length; ++i) {
-		var act = chr[sel[i]]
-		if (act) {
-			if(act.f) { // callback and reset
-				fcn(def, ctx)
-				ctx.k = act.k
-				fcn = act.f
-				ctx.v = ''
+/**
+ * Parse a CSS-style selector string and return {prefix, tag, xmlns, attributes}
+ * @param {string} selectorString - The seed selector string
+ * @param {Object} [optionalContect] - The existing definition to be augmented
+ * @returns {Object} - The parsed element definition
+ */
+module.exports = function parse(selectorString, optionalContect) {
+	var res = optionalContect || {},
+			lst = selectorString.replace(rRE, '').match(mRE)
+	return lst ? lst.reduce(add, res) : res
+}
+
+function add(res, txt) {
+	var idx = -1,
+			key = ''
+	switch (txt[0]) {
+		case '[':
+			idx = txt.indexOf('=')
+			key = txt.slice(1, idx)
+			if (!res.attributes) res.attributes = {}
+			if (idx === -1) res.attributes[key] = true
+			else if (idx === txt.length-2) res.attributes[key] = false
+			else {
+				var val = txt.slice(idx+1, -1)
+				if (key === 'xmlns') res.xmlns = val
+				else res.attributes[key] = val
 			}
-			if (act.m) mod = act.m
-			if (act.x) chr = markers[act.x]
-		}
-		else ctx[mod] += sel[i]
+			return res
+		case '.':
+			key = txt.slice(1)
+			if (!res.attributes) res.attributes = {class: key}
+			else if (res.attributes.class) res.attributes.class += ' ' + key
+			else res.attributes.class = key
+			return res
+		case '#':
+			if (!res.attributes) res.attributes = {}
+			res.attributes.id = txt.slice(1)
+			return res
+		default:
+			idx = txt.indexOf(':')
+			if (idx === -1) res.tag = txt
+			else {
+				res.tag = txt.slice(idx+1)
+				res.prefix = txt.slice(0,idx)
+			}
+			return res
 	}
-	fcn(def, ctx)
-	return checkTagNS(def)
-}
-// call back editing function
-function setId(res, ctx) {
-	if (!res.attributes) res.attributes = {}
-	res.attributes.id = ctx.v
-}
-function appendClass(res, ctx) {
-	if (!res.attributes) res.attributes = {}
-	var att = res.attributes
-	if (ctx.v) {
-		if (att.class) att.class += ' ' + ctx.v
-		else att.class = ctx.v
-	}
-}
-function setAttribute(res, ctx) {
-	if (ctx.k === 'xmlns') res.xmlns = ctx.v
-	else {
-		if (!res.attributes) res.attributes = {}
-		res.attributes[ctx.k] = ctx.v || true
-	}
-}
-function setTag(res, ctx) {
-	res.tag = ctx.v
-}
-// final prefix chack
-function checkTagNS(res) {
-	var tag = res.tag,
-			idx = tag.indexOf(':')
-	if (idx >= 0) {
-		res.prefix = tag.slice(0, idx)
-		res.tag = tag.slice(idx+1)
-	}
-	return res
 }
