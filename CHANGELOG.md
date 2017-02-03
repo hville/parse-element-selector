@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD022 MD024 MD026 MD032 MD041 -->
+<!-- markdownlint-disable MD012 MD022 MD024 MD026 MD032 MD041 -->
 
 # Change Log
 
