@@ -20,6 +20,7 @@ var d01 = parse('div.c1#i1[style="color:blue"].c2'), // {tag:'div', attributes:{
 
 Object returned is always in the form `{tag, xmlns, prefix, attributes}` so that `tag`, `xmlns` and/or `prefix`
 can be used for `document.createElement` or `document.createElementNS` before applying the remaining attributes if any.
+Properties not found are not declared (i.e. `parse('') => {}`)
 
 # License
 
