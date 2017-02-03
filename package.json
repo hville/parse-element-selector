@@ -1,18 +1,22 @@
 {
   "name": "parse-element-selector",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "parse string w3 element selector used in hyperscript functions",
   "keywords": [
-    "dom", "createElement", "hyperscript", "svg"
+    "dom",
+    "createElement",
+    "hyperscript",
+    "svg"
   ],
   "author": "Hugo Villeneuve",
   "main": ".index.js",
   "dependencies": {},
   "devDependencies": {
-    "cotest": "^1.6.1"
+    "cotest": "^2.0.2"
   },
   "scripts": {
-    "test": "cotest test"
+    "test": "cotest test",
+    "min": "google-closure-compiler-js index.js > ./bld/index.min.js"
   },
   "repository": {
     "type": "git",
