@@ -9,6 +9,12 @@
 ~~Removed, Changed, Deprecated, Added, Fixed, Security~~
 
 
+## [1.1.0] - 2017-02-25
+### Changed
+- Removed whitespace removal to allow SVG space seperated attributes
+- Updated dev-dependencies
+
+
 ## [1.0.0] - 2017-02-02
 ### Changed
 - RegExp parsing instead of custom algorithm
